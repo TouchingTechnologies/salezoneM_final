@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="view_bg">#5CE68A</color>
+    <color name="white">#ffffff</color>
+    <color name="btn_bg">#343434</color>
+
+    <color name="maincolor">#5CE68A</color>
+    <color name="maincolor_light">#455CE68A</color>
+    <color name="backcolor">#5ce6ad</color>
+
+    <color name="colorPrimary">#378a52</color>
+    <color name="colorPrimaryDark">#5ce68a</color>
+    <color name="colorAccent">#9df0b8</color>
+
+</resources>

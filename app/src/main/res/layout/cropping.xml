@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:background="@android:color/transparent"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    >
+
+<FrameLayout
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:background="@android:color/transparent"
+    android:layout_height="match_parent">
+
+    <!--<ImageView
+        android:id="@+id/cropImageView"
+        xmlns:custom="http://schemas.android.com/apk/res-auto"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:src="@drawable/idcard"
+        android:padding="16dp"
+
+        />
+-->
+    <com.isseiaoki.simplecropview.CropImageView
+        android:id="@+id/cropImageView"
+        xmlns:custom="http://schemas.android.com/apk/res-auto"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingBottom="30dp"
+        custom:cropMode="ratio_1_1"
+        />
+
+
+</FrameLayout>
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fab_tick"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        app:rippleColor="@color/colorPrimaryDark"
+        app:elevation="2dp"
+        android:layout_margin="@dimen/fab_margin"
+        android:src="@drawable/next" />
+
+
+<android.support.design.widget.FloatingActionButton
+android:id="@+id/fab_delte"
+android:layout_width="wrap_content"
+android:layout_height="wrap_content"
+android:layout_gravity="bottom|start"
+app:rippleColor="@color/colorPrimaryDark"
+app:elevation="2dp"
+android:layout_margin="@dimen/fab_margin"
+android:src="@android:drawable/ic_menu_delete" />
+
+    </android.support.design.widget.CoordinatorLayout>

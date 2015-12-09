@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="10dp"
+    android:orientation="vertical"
+    >
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_marginTop="20dp"
+
+        android:layout_height="wrap_content"
+        android:id="@+id/linearLayout">
+
+        <TextView
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="Description"
+            android:textStyle="bold"
+            android:id="@+id/description"
+             />
+        <EditText
+            android:layout_width="fill_parent"
+            android:layout_marginTop="8dp"
+            android:layout_height="wrap_content"
+            android:background="@drawable/texbox"
+            android:paddingLeft="10dp"
+            android:textAppearance="?android:attr/textAppearanceListItemSmall"
+            android:lines="3"
+            android:hint="Description on the post"
+            android:id="@+id/editText_description"
+             />
+
+
+        <TextView
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:gravity="center"
+            android:layout_marginTop="10dp"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="Start date"
+            android:id="@+id/textView"
+             />
+        <EditText
+            android:layout_width="fill_parent"
+            android:layout_marginTop="5dp"
+            android:layout_height="wrap_content"
+            android:background="@drawable/texbox"
+            android:hint="2015-04-04"
+            android:textAppearance="?android:attr/textAppearanceListItemSmall"
+            android:singleLine="true"
+            android:padding="10dp"
+            android:id="@+id/editText_startdate"
+            />
+        <TextView
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:textStyle="bold"
+            android:layout_marginTop="10dp"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="End date"
+            android:id="@+id/textViewd"
+            />
+
+
+        <EditText
+            android:layout_width="fill_parent"
+            android:layout_marginTop="5dp"
+            android:padding="10dp"
+            android:hint="2015-05-05"
+            android:textAppearance="?android:attr/textAppearanceListItemSmall"
+            android:layout_height="wrap_content"
+            android:background="@drawable/texbox"
+            android:singleLine="true"
+            android:id="@+id/editText_enddate"
+            />
+
+
+        <LinearLayout
+            android:orientation="vertical"
+
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content">
+
+            <LinearLayout
+                android:id="@+id/radio_group"
+                android:layout_width="fill_parent"
+                android:orientation="horizontal"
+                android:layout_marginTop="18dp"
+                android:padding="10dp"
+                android:background="@drawable/texbox"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+
+                    android:layout_gravity="center_vertical"
+                    android:textStyle="bold"
+
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:text="*Optional"
+                    android:id="@+id/textV"
+                    />
+
+
+                <CheckBox
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:textAppearance="?android:attr/textAppearanceListItemSmall"
+                    android:text="Upload image"
+                    android:id="@+id/checkBox_image"
+                    android:layout_weight="1" />
+
+            </LinearLayout>
+
+            <ImageView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:adjustViewBounds="true"
+                android:src="@drawable/imageicons"
+                android:id="@+id/imageView_upload"
+                />
+            <LinearLayout
+                android:orientation="vertical"
+
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content">
+                <TextView
+                    android:layout_width="fill_parent"
+
+                    android:layout_height="wrap_content"
+
+                    android:layout_gravity="center_vertical"
+                    android:textStyle="bold"
+
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+
+                    android:id="@+id/tetV"
+                    />
+                <TextView
+                    android:layout_width="fill_parent"
+
+                    android:layout_height="wrap_content"
+
+                    android:layout_gravity="center_vertical"
+                    android:textStyle="bold"
+
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+
+                    android:id="@+id/ttV"
+                    />
+                </LinearLayout>
+
+        </LinearLayout>
+    </LinearLayout>
+    </ScrollView>
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:orientation="horizontal"
+        android:layout_alignParentBottom="true"
+        android:layout_height="wrap_content">
+
+        <Button
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:text="Cancel"
+            android:id="@+id/button_cancel" />
+
+        <Button
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:background="@drawable/primary_round"
+            android:layout_height="wrap_content"
+            android:text="Upload"
+            android:id="@+id/button_upload" />
+
+    </LinearLayout>
+
+
+</RelativeLayout>
