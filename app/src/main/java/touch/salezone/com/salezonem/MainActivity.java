@@ -12,10 +12,14 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import com.digits.sdk.android.Digits;
 import com.google.gson.Gson;
 import com.orm.query.Condition;
 import com.orm.query.Select;
 
+import com.twitter.sdk.android.core.TwitterAuthConfig;
+import com.twitter.sdk.android.core.TwitterCore;
+import io.fabric.sdk.android.Fabric;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
@@ -42,12 +46,14 @@ import util.Vars;
 
 
 public class MainActivity extends ActionBarActivity {
+
+
    private ActionBar actionBar;
    private Menu mOptionsMenu;
 
    TabsPagerAdapter mSectionsPagerAdapter;
   // private String[] tabs = { "Scan ", "Review Logs", "Upload Ads" };
-    private String[] tabs = { "Scan ", "Upload Ads" };
+    private String[] tabs = { "Scan ", "Upload Ads","My Ads"};
    ViewPager mViewPager;
    Vars vars;
    Alert alert;
@@ -56,6 +62,7 @@ public class MainActivity extends ActionBarActivity {
    @Override
    protected void onCreate(Bundle savedInstanceState) {
       super.onCreate(savedInstanceState);
+
 
       vars= new Vars(this);
       vars.log("location===========" + vars.location);
@@ -81,8 +88,6 @@ public class MainActivity extends ActionBarActivity {
 
       actionBar.setHomeButtonEnabled(false);
        actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
-
-
 
       for (String tab_name : tabs) {
          actionBar.addTab(actionBar.newTab().setText(tab_name).setTabListener(new ActionBar.TabListener() {

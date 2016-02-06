@@ -4,6 +4,7 @@ package fragments;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.app.Service;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -14,13 +15,17 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
+import android.os.Looper;
 import android.provider.MediaStore;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.util.Base64;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
@@ -28,9 +33,13 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
 
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.google.gson.Gson;
+import com.isseiaoki.simplecropview.CropImageView;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -57,28 +66,35 @@ import java.util.UUID;
 import objects.FeebObject;
 import objects.ResultsOb;
 import touch.salezone.com.salezonem.MainActivity;
+import touch.salezone.com.salezonem.PreviewActivity;
 import touch.salezone.com.salezonem.R;
 import util.Alert;
 import util.AndroidMultiPartEntity;
+import util.SoftKeyboard;
 import util.Vars;
 
 public class UploadFragment extends Fragment implements View.OnClickListener{
-	EditText editText_startdate,editText_enddate,editText_description;
+	EditText editText_startdate,editText_enddate,editText_description,editText_title,editText_oldpx,editText_newpx;
 	CheckBox checkBox_image;
 	Button upload,cancel;
 	//AlertDialog alertDialog;
 	ProgressDialog prog;
 	File file;
 	ImageView uploadimage;
+	RelativeLayout grouplayout;
 	Gson gson;
 	Alert alerter;
 	String URL_FEED="http://salezone.co/salezonem/SaleZone/uploadposts.php";
 	Vars vars;
-	Bitmap bitmap;
+	Bitmap bitmap,finalbitmap;
 	String imagestring = null;
 	ResultsOb gsonMes ;
 	private static int RESULT_LOAD_IMAGE = 1;
 	static int CROP_FROM_MEDIA = 2;
+	AlertDialog alertDialog_crop;
+	SoftKeyboard softKeyboard;
+	LinearLayout button_layout;
+	InputMethodManager im;
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
@@ -97,6 +113,11 @@ public class UploadFragment extends Fragment implements View.OnClickListener{
 		uploadimage = (ImageView) rootView.findViewById(R.id.imageView_upload);
 		uploadimage.setVisibility(View.GONE);
 		uploadimage.setOnClickListener(this);
+
+		editText_title = (EditText) rootView.findViewById(R.id.editText_title);
+		editText_oldpx = (EditText) rootView.findViewById(R.id.editText_oldpx);
+		editText_newpx = (EditText) rootView.findViewById(R.id.editText_newpx);
+
 		editText_startdate = (EditText) rootView.findViewById(R.id.editText_startdate);
 		editText_enddate = (EditText) rootView.findViewById(R.id.editText_enddate);
 		editText_description = (EditText) rootView.findViewById(R.id.editText_description);
@@ -114,7 +135,7 @@ public class UploadFragment extends Fragment implements View.OnClickListener{
 				DialogFragment newFragment = new DatePickerFragment() {
 					@Override
 					public void onDateSet(DatePicker view, int year, int month, int day) {
-						int monthadd= month+1;
+						int monthadd = month + 1;
 						editText_startdate.setText("" + year + "-" + monthadd + "-" + day);
 						super.onDateSet(view, year, month, day);
 					}
@@ -131,7 +152,7 @@ public class UploadFragment extends Fragment implements View.OnClickListener{
 
 					@Override
 					public void onDateSet(DatePicker view, int year, int month, int day) {
-						int monthadd = month+1;
+						int monthadd = month + 1;
 						editText_enddate.setText(year + "-" + monthadd + "-" + day);
 						super.onDateSet(view, year, month, day);
 
@@ -144,11 +165,45 @@ public class UploadFragment extends Fragment implements View.OnClickListener{
 		checkBox_image.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
 			@Override
 			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-				if(isChecked){
+				if (isChecked) {
 					uploadimage.setVisibility(View.VISIBLE);
-				}else{
+				} else {
 					uploadimage.setVisibility(View.GONE);
 				}
+
+			}
+		});
+		button_layout= (LinearLayout) rootView.findViewById(R.id.button_layout);
+		grouplayout = (RelativeLayout) rootView.findViewById(R.id.grouplayout);
+		im = (InputMethodManager) getActivity().getSystemService(Service.INPUT_METHOD_SERVICE);
+		softKeyboard = new SoftKeyboard(grouplayout, im);
+		softKeyboard.setSoftKeyboardCallback(new SoftKeyboard.SoftKeyboardChanged()
+		{
+
+			@Override
+			public void onSoftKeyboardHide()
+			{
+				new Handler(Looper.getMainLooper()).post(new Runnable() {
+					@Override
+					public void run() {
+						button_layout.setVisibility(View.VISIBLE);
+					}
+				});
+
+			}
+
+			@Override
+			public void onSoftKeyboardShow()
+			{
+
+				new Handler(Looper.getMainLooper()).post(new Runnable() {
+					@Override
+					public void run() {
+						button_layout.setVisibility(View.GONE);
+					}
+				});
+
+
 
 			}
 		});
@@ -169,22 +224,44 @@ public class UploadFragment extends Fragment implements View.OnClickListener{
 				editText_startdate.setText("");
 				editText_description.setText("");
 				editText_enddate.setText("");
-				uploadimage.setImageDrawable(getResources().getDrawable(R.drawable.imageicons));
+				uploadimage.setImageDrawable(getResources().getDrawable(R.mipmap.ic_upload_image));
 				imagestring=null;
 
 				break;
 			case R.id.button_upload:
-				if (editText_description.getText().toString().equalsIgnoreCase("")) {
-					alerter.alerterSuccess("Error *Description", "Please enter some description");
+				if(editText_title.getText().toString().equalsIgnoreCase("")){
+					editText_title.setError("Tittle required");
+				}
+				else if (editText_description.getText().toString().equalsIgnoreCase("")) {
+					editText_description.setError("Please enter some description");
 				} else if (editText_startdate.getText().toString().equalsIgnoreCase("")) {
-					alerter.alerterSuccess("Error *Start date", "Please select start date");
+					editText_startdate.setError("Please select start date");
 				} else if (editText_enddate.getText().toString().equalsIgnoreCase("")) {
-					alerter.alerterSuccess("Error *End date", "Please select end date");
-				} else if (checkBox_image.isChecked() && imagestring == null) {
+					editText_enddate.setError("Please select end date");
+				}else if (editText_oldpx.getText().toString().equalsIgnoreCase("")){
+					editText_oldpx.setError("Original price required");
+				}
+				else if (editText_newpx.getText().toString().equalsIgnoreCase("")){
+					editText_newpx.setError("New price required");
+				}
+				else if (checkBox_image.isChecked() && imagestring == null) {
 					alerter.alerterSuccess("Error *Image", "Please add an image");
 				} else {
-					UploadFileToServer task = new UploadFileToServer();
-					task.execute();
+				Intent previw = new Intent(getActivity(), PreviewActivity.class);
+					previw.putExtra("title",editText_title.getText().toString().trim());
+					previw.putExtra("description",editText_description.getText().toString());
+					previw.putExtra("start_date",editText_startdate.getText().toString().trim());
+					previw.putExtra("end_date",editText_enddate.getText().toString().trim());
+					previw.putExtra("original_px",editText_oldpx.getText().toString().trim());
+					previw.putExtra("new_px",editText_newpx.getText().toString().trim());
+
+					if (checkBox_image.isChecked()) {
+						previw.putExtra("filepath",file.getAbsolutePath());
+					}
+
+					getActivity().startActivity(previw);
+					//UploadFileToServer task = new UploadFileToServer();
+					//task.execute();
 
 				}
 
@@ -202,11 +279,10 @@ public class UploadFragment extends Fragment implements View.OnClickListener{
 		try{
 			if (requestCode == RESULT_LOAD_IMAGE && resultCode == Activity.RESULT_OK) {
 				bitmap = getBitmapFromCameraData(data, this.getActivity());
-				file = saveImage(bitmap, "delete", this.getActivity());
-				doCrop(Uri.fromFile(file));
+				cropimage(bitmap);
+			//	file = saveImage(bitmap, "delete", this.getActivity());
+			//	doCrop(Uri.fromFile(file));
 
-				TestTask task = new TestTask();
-				task.execute(bitmap);
 			}
 			if (requestCode == CROP_FROM_MEDIA) {
 
@@ -241,7 +317,7 @@ public class UploadFragment extends Fragment implements View.OnClickListener{
 		@Override
 		protected String doInBackground(Bitmap... params) {
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
-			bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+			finalbitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
 			byte[] imageBytes = baos.toByteArray();
 			imagestring = Base64.encodeToString(imageBytes,
 					Base64.DEFAULT);
@@ -373,28 +449,7 @@ public class UploadFragment extends Fragment implements View.OnClickListener{
 
 		}
 	}
-	protected void doCrop(Uri picUri) {
 
-		//call the standard crop action intent
-		Intent cropIntent = new Intent("com.android.camera.action.CROP");
-		//indicate image type and Uri of image
-		cropIntent.setDataAndType(picUri, "image/*");
-		//set crop properties
-		cropIntent.putExtra("crop", "true");
-		//indicate aspect of desired crop
-		cropIntent.putExtra("aspectX", 1);
-		cropIntent.putExtra("aspectY", 1);
-		//indicate output X and Y
-		cropIntent.putExtra("outputX", 256);
-		cropIntent.putExtra("outputY", 256);
-		//retrieve data on return
-		cropIntent.putExtra("return-data", true);
-		//start the activity - we handle returning in onActivityResult
-
-		startActivityForResult(cropIntent, CROP_FROM_MEDIA);
-
-
-	}
 	public File saveImage(Bitmap thePic, String fileName, Context context) {
 		OutputStream fOut = null;
 
@@ -462,7 +517,7 @@ public class UploadFragment extends Fragment implements View.OnClickListener{
 								editText_startdate.setText("");
 								editText_description.setText("");
 								editText_enddate.setText("");
-								uploadimage.setImageDrawable(getResources().getDrawable(R.drawable.imageicons));
+								uploadimage.setImageDrawable(getResources().getDrawable(R.mipmap.ic_upload_image));
 								if(imagestring!=null){
 									file.delete();
 									imagestring = null;
@@ -481,4 +536,57 @@ public class UploadFragment extends Fragment implements View.OnClickListener{
 		alertDialog.show();
 	}
 
+	public void cropimage (final Bitmap bitmap){
+		LayoutInflater li = LayoutInflater.from(getActivity());
+		View promptsView;
+		promptsView = li.inflate(R.layout.cropping, null);
+
+		final CropImageView cropImageView = (CropImageView) promptsView.findViewById(R.id.cropImageView);
+		cropImageView.setCropMode(CropImageView.CropMode.RATIO_FREE);
+		cropImageView.setImageBitmap(bitmap);
+
+		FloatingActionButton fab_rotate = (FloatingActionButton) promptsView.findViewById(R.id.fab_rotate);
+		FloatingActionButton fab_done = (FloatingActionButton) promptsView.findViewById(R.id.fab_tick);
+		FloatingActionButton fab_delete = (FloatingActionButton) promptsView.findViewById(R.id.fab_delte);
+		fab_done.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+
+
+				uploadimage.setImageBitmap(cropImageView.getCroppedBitmap());
+				finalbitmap = cropImageView.getCroppedBitmap();
+				TestTask task = new TestTask();
+				task.execute(finalbitmap);
+
+				file = saveImage(cropImageView.getCroppedBitmap(), "profilepic", getActivity());
+
+
+				alertDialog_crop.dismiss();
+			}
+		});
+		fab_delete.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				alertDialog_crop.dismiss();
+			}
+		});
+		fab_rotate.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				cropImageView.rotateImage(CropImageView.RotateDegrees.ROTATE_90D);
+			}
+		});
+
+		AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
+		alertDialogBuilder.setView(promptsView);
+		alertDialog_crop = alertDialogBuilder.create();
+		alertDialog_crop.show();
+
+	}
+
+	@Override
+	public void onDestroy() {
+		super.onDestroy();
+		softKeyboard.unRegisterSoftKeyboardCallback();
+	}
 }

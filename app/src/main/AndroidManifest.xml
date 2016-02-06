@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="touch.salezone.com.salezonem" >
+    package="touch.salezone.com.salezonem">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
@@ -10,20 +10,19 @@
     <application
         android:name="com.orm.SugarApp"
         android:allowBackup="true"
-        android:icon="@drawable/app"
+        android:icon="@drawable/ic_laucherpic"
         android:label="@string/app_name"
-        android:theme="@style/AppTheme" >
+        android:theme="@style/AppTheme">
         <activity
             android:name=".MainActivity"
-            android:label="@string/app_name" >
+            android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".First_Activity" >
-        </activity>
+        <activity android:name=".First_Activity" />
 
         <meta-data
             android:name="DATABASE"
@@ -41,8 +40,23 @@
         <activity
             android:name=".MerchantProfile"
             android:label="@string/title_activity_merchant_profile"
+            android:theme="@style/AppTheme.NoActionBar" />
 
-            android:theme="@style/AppTheme.NoActionBar" >
+        <meta-data
+            android:name="io.fabric.ApiKey"
+            android:value="a61155ed348fa8ac86aaacab381a56a00355aa3d" />
+
+        <activity
+            android:name=".VerifySMS"
+            android:label="@string/title_activity_verify_sms"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
+        <activity
+            android:name=".PreviewActivity"
+            android:label="@string/title_activity_preview"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar">
+
         </activity>
     </application>
 

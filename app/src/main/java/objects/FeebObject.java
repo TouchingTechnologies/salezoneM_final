@@ -15,7 +15,24 @@ public class FeebObject {
     private String longititude;
     private String mobile;
     private String picname;
+    String error;
+    String status;
 
+    public String getError() {
+        return error;
+    }
+
+    public void setError(String error) {
+        this.error = error;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
 
     public String getId() {
         return id;

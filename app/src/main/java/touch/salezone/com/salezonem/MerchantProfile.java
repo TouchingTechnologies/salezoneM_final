@@ -26,12 +26,15 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.telephony.TelephonyManager;
+import android.text.InputFilter;
+import android.text.Spanned;
 import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -72,6 +75,8 @@ import java.util.Locale;
 import objects.FeebObject;
 import util.Alert;
 import util.AndroidMultiPartEntity;
+import util.ConnectionClass;
+import util.Utils;
 import util.Vars;
 
 public class MerchantProfile extends AppCompatActivity implements
@@ -139,7 +144,6 @@ public class MerchantProfile extends AppCompatActivity implements
     String lblLocation;
 
     Alert alert;
-
     Gson gson;
     boolean hasimage;
     Vars vars;
@@ -148,6 +152,8 @@ public class MerchantProfile extends AppCompatActivity implements
     ProgressDialog dialog_prog;
     private UploadFileToServer task;
     private final String TAGS = "MerchantProfile";
+    CheckBox account;
+    ProgressDialog progressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -158,11 +164,29 @@ public class MerchantProfile extends AppCompatActivity implements
         gson = new Gson();
 
         setContentView(R.layout.activity_merchant_profile);
+        account = (CheckBox) findViewById(R.id.account);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         hasimage = false;
 
         business_name = (EditText) findViewById(R.id.business_name);
+
+        business_name.setFilters(new InputFilter[] {
+                new InputFilter() {
+                    @Override
+                    public CharSequence filter(CharSequence cs, int start,
+                                               int end, Spanned spanned, int dStart, int dEnd) {
+                        // TODO Auto-generated method stub
+                        if(cs.equals("")){ // for backspace
+                            return cs;
+                        }
+                        if(cs.toString().matches("[a-zA-Z ]+")){
+                            return cs;
+                        }
+                        return "";
+                    }
+                }
+        });
         iv_ProfilePic = (ImageView) findViewById(R.id.iv_profilePic);
         mobile = (EditText) findViewById(R.id.mobile);
 
@@ -191,6 +215,7 @@ public class MerchantProfile extends AppCompatActivity implements
 
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -206,27 +231,73 @@ public class MerchantProfile extends AppCompatActivity implements
                         }
                         GetAddressTask getloc = new GetAddressTask();
                         getloc.execute();
+                        if(account.isChecked()){
+                            if(business_name.getText().toString().equalsIgnoreCase("")){
+                                Snackbar.make(view, "Business name can't be empty", Snackbar.LENGTH_LONG)
+                                        .setAction("", null).show();
+                            }else if(!validnumber(mobile.getText().toString())){
+                                Snackbar.make(view, "Phone number is invalid", Snackbar.LENGTH_LONG)
+                                        .setAction("", null).show();
+                            } else{
+                                progressDialog = ProgressDialog.show(MerchantProfile.this,"Updating account","please wait...",false,false);
+                                String[] parameter = {"mobile","name"};
+                                String[] values ={mobile.getText().toString().trim(),business_name.getText().toString().trim()};
 
-                        if(!hasimage){
+                                ConnectionClass.ConnectionClass(MerchantProfile.this, Vars.server + "checknumber.php", parameter, values, "Verify", new ConnectionClass.VolleyCallback() {
+                                    @Override
+                                    public void onSuccess(String result) {
+                                        progressDialog.dismiss();
+                                        vars.log("here===" + result);
+                                        FeebObject feebObject = new Gson().fromJson(result, FeebObject.class);
+                                        if (feebObject.getMobile().equalsIgnoreCase(mobile.getText().toString().trim())) {
+                                            vars.edit.putString("location", feebObject.getLocation());
+                                            vars.edit.putString("latitudes", feebObject.getLatitude());
+                                            vars.edit.putString("longitude", feebObject.getLongititude());
+                                            vars.edit.putString("name", feebObject.getName());
+                                            vars.edit.putString("mobile", feebObject.getMobile());
+                                            vars.edit.putString("deciceID", feebObject.getId());
+                                            vars.edit.commit();
 
-                            Snackbar.make(view, "Please select profile image", Snackbar.LENGTH_LONG)
-                                    .setAction("", null).show();
-                        }else if(business_name.getText().toString().equalsIgnoreCase("")){
-                            Snackbar.make(view, "Business name can't be empty", Snackbar.LENGTH_LONG)
-                                    .setAction("", null).show();
-                        }else if(!validnumber(mobile.getText().toString())){
-                            Snackbar.make(view, "Phone number is invalid", Snackbar.LENGTH_LONG)
-                                    .setAction("", null).show();
+                                            Intent gomain = new Intent(MerchantProfile.this,MainActivity.class);
+                                            startActivity(gomain);
+                                            finish();
+/*
+                                            Intent man = new Intent(MerchantProfile.this, VerifySMS.class);
+                                            man.putExtra("location", feebObject.getLocation());
+                                            man.putExtra("latitudes", feebObject.getLatitude());
+                                            man.putExtra("longitude", feebObject.getLongititude());
+                                            man.putExtra("name", feebObject.getName());
+                                            man.putExtra("mobile", feebObject.getMobile());
+                                            man.putExtra("deciceID", feebObject.getId());
+                                            startActivity(man);
+                                            finish();*/
+
+                                        } else {
+                                            alert.go_to_activity(MerchantProfile.this, "Error", feebObject.getMobile());
+                                        }
+                                    }
+                                });
+
+
+                            }
                         }else {
-                            waiting = true;
-                           // alertDialog = ProgressDialog.show(MerchantProfile.this, "Registration in progress", "Please wait...");
-                            task = new UploadFileToServer();
-                            task.startProcess(MerchantProfile.this);
+                            if (!hasimage) {
 
-                           /* UploadFileToServer upload = new UploadFileToServer();
-                            upload.execute();*/
+                                Snackbar.make(view, "Please select profile image", Snackbar.LENGTH_LONG)
+                                        .setAction("", null).show();
+                            } else if (business_name.getText().toString().equalsIgnoreCase("")) {
+                                Snackbar.make(view, "Business name can't be empty", Snackbar.LENGTH_LONG)
+                                        .setAction("", null).show();
+                            } else if (!validnumber(mobile.getText().toString())) {
+                                Snackbar.make(view, "Phone number is invalid", Snackbar.LENGTH_LONG)
+                                        .setAction("", null).show();
+                            } else {
+                                    waiting = true;
+                                    task = new UploadFileToServer();
+                                    task.startProcess(MerchantProfile.this);
+
+                            }
                         }
-
                     }else{
                         vars.log("latitude==null========"+logitude);
 
@@ -453,6 +524,8 @@ public class MerchantProfile extends AppCompatActivity implements
             task.stopDialog();
         // Stop location updates to save battery, but don't disconnect the GoogleApiClient object.
         if (mGoogleApiClient.isConnected()) {
+
+
             stopLocationUpdates();
         }
     }
@@ -592,9 +665,9 @@ public class MerchantProfile extends AppCompatActivity implements
             case PICK_FROM_CAMERA:
                 try{
                     //    mImageCaptureUri = data.getData();
-                    Bitmap bitmap = MediaStore.Images.Media.getBitmap(this
-                            .getContentResolver(), mImageCaptureUri);
-                    cropimage(bitmap);
+                 //   Bitmap bitmap = MediaStore.Images.Media.getBitmap(this
+                //            .getContentResolver(), mImageCaptureUri);
+                    cropimage(Utils.decodeUri(this,mImageCaptureUri));
                     // doCrop(mImageCaptureUri);
 
                 }catch(ActivityNotFoundException ex){
@@ -617,10 +690,10 @@ public class MerchantProfile extends AppCompatActivity implements
                 mImageCaptureUri = data.getData();
 
                 try{
-                    Bitmap bitmap = MediaStore.Images.Media.getBitmap(this
-                            .getContentResolver(), mImageCaptureUri);
-                    cropimage(bitmap);
-                    file = vars.saveImage(bitmap,"profile",this);
+                  //  Bitmap bitmap = MediaStore.Images.Media.getBitmap(this
+                   //         .getContentResolver(), mImageCaptureUri);
+                    cropimage(Utils.decodeUri(this,mImageCaptureUri));
+                    file = vars.saveImage(Utils.decodeUri(this,mImageCaptureUri),"profile",this);
                     //  File files = saveImage(bitmap, "delete", this);
                     //doCrop(Uri.fromFile(files));
                     //files.delete();
@@ -648,6 +721,13 @@ public class MerchantProfile extends AppCompatActivity implements
 
         FloatingActionButton fab_done = (FloatingActionButton) promptsView.findViewById(R.id.fab_tick);
         FloatingActionButton fab_delete = (FloatingActionButton) promptsView.findViewById(R.id.fab_delte);
+        FloatingActionButton fab_rotation = (FloatingActionButton) promptsView.findViewById(R.id.fab_rotate);
+        fab_rotation.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                cropImageView.rotateImage(CropImageView.RotateDegrees.ROTATE_90D);
+            }
+        });
         fab_done.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -757,7 +837,7 @@ public class MerchantProfile extends AppCompatActivity implements
 
                 entity.addPart("latitude", new StringBody(latitude));
                 entity.addPart("longititude", new StringBody(logitude));
-                entity.addPart("mobile", new StringBody(mobile.getText().toString()));
+                entity.addPart("mobile", new StringBody(mobile.getText().toString().trim()));
                 entity.addPart("data", new FileBody(file));
 
                 //totalSize = entity.getContentLength();
@@ -797,11 +877,10 @@ public class MerchantProfile extends AppCompatActivity implements
 
                 FeebObject feebObject = gson.fromJson(result ,FeebObject.class);
 
-                if(feebObject.getPicname().equalsIgnoreCase("failed")) {
+                if(feebObject.getStatus().equalsIgnoreCase("failed")) {
                     stopDialog();
-                    alert.go_to_activity(MerchantProfile.this, "Error", feebObject.getMobile());
-
-
+                    twooption(MerchantProfile.this, "Error", feebObject.getError(), "New", "Use this account");
+                 //   alert.go_to_activity(MerchantProfile.this, "Error", feebObject.getMobile());
 
                 }else{
                     vars.edit.putString("location", feebObject.getLocation());
@@ -915,6 +994,30 @@ public class MerchantProfile extends AppCompatActivity implements
     }
 
 
+    public void twooption (final Context context,String header, final String content,String ok,String cancel){
 
+
+        final AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.AppCompatAlertDialogStyle);
+        builder.setTitle(header);
+        builder.setMessage(content);
+        builder.setNegativeButton(cancel, new DialogInterface.OnClickListener() {
+
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Intent i = new Intent(MerchantProfile.this,VerifySMS.class);
+                i.putExtra("mynumber",mobile.getText().toString().trim());
+                startActivity(i);
+            }
+        });
+        builder.setPositiveButton(ok, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+        //   builder.setNegativeButton("Cancel", null);
+        builder.show();
+
+    }
 
 }

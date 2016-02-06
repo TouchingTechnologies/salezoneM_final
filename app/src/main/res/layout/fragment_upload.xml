@@ -2,87 +2,135 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="10dp"
+    android:id="@+id/grouplayout"
     android:orientation="vertical"
+
     >
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        >
+
+        <android.support.v7.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            >
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_marginTop="20dp"
 
+        android:padding="10dp"
         android:layout_height="wrap_content"
         android:id="@+id/linearLayout">
 
-        <TextView
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="Description"
-            android:textStyle="bold"
-            android:id="@+id/description"
-             />
         <EditText
+            android:layout_width="match_parent"
+            android:layout_marginRight="10dp"
+            android:layout_marginEnd="10dp"
+            android:layout_marginTop="5dp"
+            android:inputType="textCapSentences"
+            android:layout_height="wrap_content"
+            android:background="@drawable/texbox"
+            android:hint="Title"
+            android:textAppearance="?android:attr/textAppearanceListItemSmall"
+            android:singleLine="true"
+            android:padding="10dp"
+            android:id="@+id/editText_title"
+            />
+
+        <EditText
+            android:inputType="textMultiLine"
+            android:lines="5"
+            android:minLines="6"
+            android:gravity="top|left"
+            android:maxLines="6"
             android:layout_width="fill_parent"
+            android:scrollbars="vertical"
             android:layout_marginTop="8dp"
             android:layout_height="wrap_content"
             android:background="@drawable/texbox"
             android:paddingLeft="10dp"
             android:textAppearance="?android:attr/textAppearanceListItemSmall"
-            android:lines="3"
             android:hint="Description on the post"
             android:id="@+id/editText_description"
              />
 
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="5dp"
+    android:orientation="horizontal">
 
-        <TextView
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:textStyle="bold"
-            android:gravity="center"
-            android:layout_marginTop="10dp"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="Start date"
-            android:id="@+id/textView"
-             />
+
         <EditText
-            android:layout_width="fill_parent"
+            android:layout_width="0dp"
+            android:layout_weight=".5"
             android:layout_marginTop="5dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginEnd="10dp"
             android:layout_height="wrap_content"
             android:background="@drawable/texbox"
-            android:hint="2015-04-04"
+            android:hint="Start Date"
             android:textAppearance="?android:attr/textAppearanceListItemSmall"
             android:singleLine="true"
             android:padding="10dp"
             android:id="@+id/editText_startdate"
             />
-        <TextView
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:textStyle="bold"
-            android:layout_marginTop="10dp"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="End date"
-            android:id="@+id/textViewd"
-            />
-
 
         <EditText
-            android:layout_width="fill_parent"
+            android:layout_width="0dp"
+            android:layout_weight=".5"
             android:layout_marginTop="5dp"
             android:padding="10dp"
-            android:hint="2015-05-05"
+            android:layout_marginLeft="10dp"
+            android:layout_marginStart="10dp"
+            android:hint="End Date"
             android:textAppearance="?android:attr/textAppearanceListItemSmall"
             android:layout_height="wrap_content"
             android:background="@drawable/texbox"
             android:singleLine="true"
             android:id="@+id/editText_enddate"
             />
+</LinearLayout>
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:orientation="horizontal">
+
+            <EditText
+                android:layout_width="0dp"
+                android:layout_weight=".5"
+                android:layout_marginRight="10dp"
+                android:layout_marginEnd="10dp"
+                android:layout_marginTop="5dp"
+                android:inputType="number"
+                android:layout_height="wrap_content"
+                android:background="@drawable/texbox"
+                android:hint="Original price"
+                android:textAppearance="?android:attr/textAppearanceListItemSmall"
+                android:singleLine="true"
+                android:padding="10dp"
+                android:id="@+id/editText_oldpx"
+                />
+
+            <EditText
+                android:layout_width="0dp"
+                android:layout_weight=".5"
+                android:layout_marginTop="5dp"
+                android:padding="10dp"
+                android:hint="New Price"
+                android:layout_marginLeft="10dp"
+                android:layout_marginStart="10dp"
+                android:textAppearance="?android:attr/textAppearanceListItemSmall"
+                android:layout_height="wrap_content"
+                android:background="@drawable/texbox"
+                android:inputType="number"
+                android:singleLine="true"
+                android:id="@+id/editText_newpx"
+                />
+        </LinearLayout>
 
         <LinearLayout
             android:orientation="vertical"
@@ -128,7 +176,8 @@
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:adjustViewBounds="true"
-                android:src="@drawable/imageicons"
+                android:scaleType="fitXY"
+                android:src="@mipmap/ic_upload_image"
                 android:id="@+id/imageView_upload"
                 />
             <LinearLayout
@@ -164,8 +213,10 @@
 
         </LinearLayout>
     </LinearLayout>
+        </android.support.v7.widget.CardView>
     </ScrollView>
     <LinearLayout
+        android:id="@+id/button_layout"
         android:layout_width="fill_parent"
         android:orientation="horizontal"
         android:layout_alignParentBottom="true"

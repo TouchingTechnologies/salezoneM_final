@@ -4,7 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/colorPrimaryDark"
+
     android:orientation="vertical"
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
@@ -40,7 +40,7 @@
                 android:layout_width="150dp"
                 android:layout_height="150dp"
                 android:id="@+id/iv_profilePic"
-                android:src="@drawable/imageicons"
+                android:src="@mipmap/ic_upload_image"
                 android:layout_marginTop="10dp"
                 android:layout_centerInParent="true"
                 android:layout_below="@+id/person_name"
@@ -72,6 +72,7 @@
                 <com.rengwuxian.materialedittext.MaterialEditText
                     app:met_iconLeft="@drawable/name_bis"
                     app:met_iconPadding="0dp"
+
                     app:met_floatingLabel="highlight"
                     android:textColorHint="@color/colorPrimary"
                     android:id="@+id/business_name"
@@ -80,7 +81,7 @@
                     android:hint="Business name"
                     android:layout_weight="50"
                     android:ems="10"
-                    android:inputType="textCapWords" />
+                    android:inputType="textPersonName" />
 
                 <com.rengwuxian.materialedittext.MaterialEditText
                     app:met_iconLeft="@drawable/phone"
@@ -94,6 +95,14 @@
                     android:layout_weight="50"
                     android:ems="10"
                     android:inputType="number" />
+                <CheckBox
+                    android:id="@+id/account"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/accountexists"
+
+
+                    />
 
             </LinearLayout>
 

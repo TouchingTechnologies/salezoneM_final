@@ -131,11 +131,35 @@ public class Alert {
 
     public void go_to_activity (Context context,String header,String content){
 
-
         final AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.AppCompatAlertDialogStyle);
         builder.setTitle(header);
         builder.setMessage(content);
         builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+        //   builder.setNegativeButton("Cancel", null);
+        builder.show();
+
+    }
+    public void twooption (final Context context,String header, final String content,String ok,String cancel, final Class aClass){
+
+
+        final AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.AppCompatAlertDialogStyle);
+        builder.setTitle(header);
+        builder.setMessage(content);
+        builder.setNegativeButton(cancel, new DialogInterface.OnClickListener() {
+
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Intent i = new Intent(context, aClass);
+                i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                context.startActivity(i);
+            }
+        });
+        builder.setPositiveButton(ok, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();

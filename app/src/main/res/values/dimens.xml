@@ -2,15 +2,13 @@
     <!-- Default screen margins, per the Android Design guidelines. -->
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
-<!-- indeterminate menu refresh-->
     <dimen name="action_button_min_width">56dp</dimen>
     <dimen name="indeterminate_progress_size">32dp</dimen>
     <dimen name="fab_margin">16dp</dimen>
+    <dimen name="feed_item_profile_pic">50dp</dimen>
+    <dimen name="feed_item_profile_info_padd">10dp</dimen>
+    <dimen name="feed_item_margin">10dp</dimen>
+    <dimen name="feed_item_timestamp">13sp</dimen>
+    <dimen name="feed_item_status_pad_left_right">15dp</dimen>
 
-
-
-    <dimen name="default_text_size">16sp</dimen>
-    <dimen name="ui_group_top_margin">24dp</dimen>
-
-    <dimen name="small_margin">10dp</dimen>
 </resources>

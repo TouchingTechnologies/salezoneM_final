@@ -43,7 +43,7 @@
             android:layout_marginTop="10dp"
             android:onClick="puticon"
             android:scaleType="fitXY"
-            android:src="@drawable/imageicons"
+            android:src="@mipmap/ic_upload_image"
             android:background="@drawable/tx_bg"
             android:layout_gravity="center_horizontal"/>
 
